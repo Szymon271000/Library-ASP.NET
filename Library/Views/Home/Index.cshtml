@@ -1,8 +1,24 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+﻿@model HomeViewModel
+<div class="jumbotron">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <p class="lead">
+        Discover once again the magic world of fantasy literature!<br>
+        Choose between the best books!
+    </p>
+    <hr class="my-4">
+    <p><a asp-controller="Books" asp-action="Index" class="btn btn-primary">Go to the catalogue of books <i class="fas fa-angle-right"></i></a></p>
 </div>
+<section>
+    <h2>Best Rating</h2>
+    @foreach (BookViewModel book in Model.BestRatingBooks)
+    {
+        <partial name="Books/_BookLine" model="@book"/>
+    }
+</section>
+<section>
+    <h2>Most Recent</h2>
+    @foreach (BookViewModel book in Model.MostRecentBooks)
+    {
+        <partial name="Books/_BookLine" model="@book"/>
+    }
+</section>

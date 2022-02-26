@@ -1,4 +1,7 @@
 ﻿using Library.Models;
+using Library.Models.Services.Application;
+using Library.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,29 +12,20 @@ using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public async Task<IActionResult> Index([FromServices] IBookService bookService)
         {
-            _logger = logger;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            ViewData["Title"] = "Welcome to Library!";
+            List<BookViewModel> bestRatingBooks = await bookService.GetBestRatingBooksAsync();
+            List<BookViewModel> mostRecentBooks = await bookService.GetMostRecentBooksAsync();
+            HomeViewModel viewModel = new HomeViewModel
+            {
+                BestRatingBooks = bestRatingBooks,
+                MostRecentBooks = mostRecentBooks
+            };
+            return View(viewModel);
         }
     }
 }

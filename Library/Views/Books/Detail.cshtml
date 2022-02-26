@@ -1,0 +1,78 @@
+@model BookDetailViewModel
+@inject IAuthorizationService authService
+@{
+    AuthorizationResult bookBuyerResult = await authService.AuthorizeAsync(User, "BookBuyer");
+    bool isPurchased = bookBuyerResult.Succeeded;
+}
+<section class="book-info">
+    <div class="row">
+        <div class="col-md-9">
+            <h1>
+                @Model.Title
+                @if (this.User.IsInRole(nameof(Role.Administrator)))
+                {
+                    <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@Model.Id"><i class="fas fa-pencil-alt"></i> Edit</a>
+                }
+            </h1>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            @if (isPurchased)
+            {
+                <span class="alert alert-secondary btn-block">You purchased this book</span>
+            }
+            else
+            {
+                <a class="btn btn-warning btn-lg btn-block purchase-book" asp-action="Pay" asp-route-id="@Model.Id">Purchase</a>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9" html-sanitize>
+            @Model.Summary
+        </div>
+        <div class="col-md-3">
+            <aside>
+                <author>by @Model.Author</author>
+                <div class="rating" title="@Model.Rating">
+                    <rating value="@Model.Rating"></rating>
+                </div>
+                <div class="price">
+                    <price current-price="@Model.CurrentPrice" full-price="@Model.FullPrice"></price>
+                </div>
+                <img src="@Model.BookCover" class="img-fluid book-image" alt="@Model.Title" asp-append-version="true">
+            </aside>
+        </div>
+    </div>
+</section>
+
+<section class="book-chapters">
+    <h2>
+        Chapters (@Model.Chapters.Count)
+        @if (this.User.IsInRole(nameof(Role.Administrator)))
+        {
+            <a class="btn btn-outline-primary btn-sm" asp-controller="Chapters" asp-action="Create" asp-route-id="@Model.Id"><i class="fas fa-plus"></i> Add new</a>
+        }
+    </h2>
+    @foreach (var chapter in Model.Chapters)
+    {
+        <hr>
+        <div class="row">
+            <div class="col-md-9 d-flex align-items-center">
+                @if ((this.User.IsInRole(nameof(Role.Administrator))) || isPurchased)
+                {
+                    <a asp-controller="Chapters" asp-action="Detail" asp-route-id="@chapter.Id">@chapter.Title</a>
+                }
+                else
+                {
+                    @chapter.Title
+                }
+            </div>
+            <div class="col-md-3 d-flex align-items-center justify-content-end">
+                @if (this.User.IsInRole(nameof(Role.Administrator)))
+                {
+                    <a class="btn btn-outline-primary btn-sm ml-3" asp-controller="Chapters" asp-action="Edit" asp-route-id="@chapter.Id"><i class="fas fa-pencil-alt"></i></a>
+                }
+            </div>
+        </div>
+    }
+</section>

@@ -1,0 +1,34 @@
+﻿@model BookCreateInputModel
+<h1 id="center">@ViewData["Title"]</h1>
+<form method="post">
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="All"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <input type="text" asp-for="Title" class="form-control form-control-lg" placeholder="Insert the title of your book...">
+            <span asp-validation-for="Title"></span>
+            <br>
+            <input type="text" asp-for="Author" class="form-control form-control-lg" placeholder="Insert the author of your book...">
+            <span asp-validation-for="Author"></span>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Add book!</button>
+        </div>
+    </div>
+</form>
+@section Scripts
+{
+    <partial name="_Validation"/>
+}
